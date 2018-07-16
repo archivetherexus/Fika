@@ -6,6 +6,6 @@
 
 using namespace fika;
 
-extern "C" void fika_syscall(u32 eax, u32 ebx, u32 ecx, u32 edx);
+extern "C" void fika_syscall(U32 eax, U32 ebx, U32 ecx, U32 edx);
 
 #endif
