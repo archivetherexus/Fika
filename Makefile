@@ -11,7 +11,7 @@ all: $(OBJECTS)
 	nasm -f elf64 $< -o $@
 
 %.o: %.cpp
-	g++ -nostdlib -c $< -o $@ -Isrc/fika/arch/x86
+	g++ -nostdlib -c $< -o $@ -Isrc/fika/arch/x86 -g
 
 clean:
 	rm $(OBJECTS)

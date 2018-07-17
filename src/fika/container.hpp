@@ -11,14 +11,14 @@ namespace fika {
 
     template<typename T> class ContainerResource {
     public:
-        int reference_count;
+        int reference_count = 0;
         virtual T next(IteratorState<T> *state) = 0;
         virtual bool has_next(IteratorState<T> *state) = 0;
     };
     template<typename T> class Container {
         virtual Iterator<T> iterator() const = 0;
         virtual void clear() = 0;
-        virtual U64 count() = 0;
+        virtual U64 count() const = 0;
     };
 }
 

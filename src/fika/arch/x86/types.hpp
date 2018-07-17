@@ -12,6 +12,8 @@ namespace fika {
     typedef unsigned short     U16;
     typedef unsigned int       U32;
     typedef unsigned long long U64;
+
+    typedef long unsigned int Length;
 }
 
 #endif
