@@ -3,29 +3,32 @@
 #define FIKA_ARRAY_HPP
 
 #include "container.hpp"
+#include "iterator.hpp"
 
 namespace fika {
-
-    template<U64 array_capacity, typename T> class ArrayIteratorState {
+    template<typename T> class IteratorState;
+    template<U64 array_capacity, typename T> class ArrayIteratorState : public IteratorState<T> {
     public:
         U64 i;
     };
-    template<U64 array_capacity, typename T> class ArrayResource : private ContainerResource<ArrayIteratorState<array_capacity, T>, T> {
+    template<U64 array_capacity, typename T> class ArrayResource : public ContainerResource<T> {
     public:
         T data[array_capacity];
-        virtual T next(ArrayIteratorState<array_capacity, T> *state) override {
+        virtual T next(IteratorState<T> *uncastedState) override {
+            auto state = static_cast<ArrayIteratorState<array_capacity, T>*>(uncastedState);
             if (state->i < array_capacity) {
                 return data[state->i++];
             } else {
                 return 0; // FIXME: There must be better way! Perhaps exceptions? Or default values...
             }
         }
-        virtual bool has_next(ArrayIteratorState<array_capacity, T> *state) override {
+        virtual bool has_next(IteratorState<T> *uncastedState) override {
+            auto state = static_cast<ArrayIteratorState<array_capacity, T>*>(uncastedState);
             return state->i < array_capacity;
         }
     };
 
-    template<U64 array_capacity, typename T> class Array : Container<T> {
+    template<U64 array_capacity, typename T> class Array : public Container<T> {
     public:
         Array() {
             resource = new ArrayResource<array_capacity, T>();
@@ -37,8 +40,8 @@ namespace fika {
                 delete resource;
             }
         }
-        virtual Iterator<ArrayIteratorState<array_capacity, T>, T> iterator() override {
-            return Iterator<ArrayIteratorState<array_capacity, T>, T>(resource);
+        virtual Iterator<T> iterator() const override {
+            return Iterator<T>(resource, new ArrayIteratorState<array_capacity, T>());
         }
         virtual void clear() override {
 

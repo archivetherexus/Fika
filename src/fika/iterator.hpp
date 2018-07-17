@@ -5,9 +5,10 @@
 #include "container.hpp"
 
 namespace fika {
-    template<class IteratorState, typename T> class Iterator {
+    template<typename T> class IteratorState {};
+    template<typename T> class Iterator {
     public:
-        Iterator(ContainerResource *resource, IteratorState *state)
+        Iterator(ContainerResource<T> *resource, IteratorState<T> *state)
         : resource(resource)
         , state(state) {
             resource->reference_count++;
@@ -26,8 +27,8 @@ namespace fika {
             return resource->has_next(state);
         };
     private:
-        ContainerResource<IteratorState, T> *resource;
-        IteratorState *state;
+        ContainerResource<T> *resource;
+        IteratorState<T> *state;
     };
 }
 

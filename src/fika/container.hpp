@@ -6,16 +6,17 @@
 
 namespace fika {
 
-    template <class IteratorState, typename T> class Iterator;
+    template<typename T> class Iterator;
+    template<typename T> class IteratorState;
 
-    template <class IteratorState, typename T> class ContainerResource {
+    template<typename T> class ContainerResource {
     public:
-        int referece_count;
-        virtual T next(IteratorState *state) = 0;
-        virtual bool has_next(IteratorState *state) = 0;
+        int reference_count;
+        virtual T next(IteratorState<T> *state) = 0;
+        virtual bool has_next(IteratorState<T> *state) = 0;
     };
-    template <typename T> class Container {
-        virtual Iterator<T> iterator() = 0;
+    template<typename T> class Container {
+        virtual Iterator<T> iterator() const = 0;
         virtual void clear() = 0;
         virtual U64 count() = 0;
     };
