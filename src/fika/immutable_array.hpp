@@ -4,11 +4,16 @@
 
 #include "container.hpp"
 #include "initializer_list.hpp"
+#include "iterator.hpp"
 
 namespace fika {
     template<typename T> class ImmutableArrayIteratorState : public IteratorState<T> {
     public:
         U64 i;
+        ImmutableArrayIteratorState(U64 i): i(i) {}
+        virtual IteratorState<T> *copy() const override {
+            return new ImmutableArrayIteratorState<T>{i}; 
+        }
     };
     template<typename T> class ImmutableArrayResource : public ContainerResource<T> {
     public:
@@ -41,11 +46,15 @@ namespace fika {
             resource = new ImmutableArrayResource<T>(array_size);
             resource->reference_count++;
         }
+        ImmutableArray(const ImmutableArray<T> &immutable_array) {
+            this->resource = immutable_array.resource;
+            this->resource->reference_count++;
+        }
         ImmutableArray(std::initializer_list<T> list) {
             resource = new ImmutableArrayResource<T>(list.size());
             resource->reference_count++;
 
-            int i = 0 ;
+            int i = 0;
             for (auto x : list) {
                 resource->data[i++] = x;
             }
@@ -57,14 +66,11 @@ namespace fika {
             }
         }
         virtual Iterator<T> iterator() const override {
-            return Iterator<T>(resource, new ImmutableArrayIteratorState<T>());
-        }
-        virtual void clear() override {
-            // FIXME: Implement later.
+            return Iterator<T>(resource, new ImmutableArrayIteratorState<T>(0));
         }
         virtual U64 count() const override {
             // FIXME: Implement later!
-            return 0;
+            return resource->array_size;
         }
 
         /*
@@ -93,7 +99,7 @@ namespace fika {
             return *this; // FIXME: Is this the correct implementation?
         }
         */
-    private:
+    protected:
         ImmutableArrayResource<T> *resource;
     };
 }

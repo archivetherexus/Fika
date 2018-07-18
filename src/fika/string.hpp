@@ -3,11 +3,13 @@
 #define FIKA_STRING_HPP
 
 #include "object.hpp"
+#include "immutable_array.hpp"
 
 namespace fika {
-    class String : public Object {
+    class String : public Object, public ImmutableArray<U32> {
     public:
-        virtual const class String &to_string() const override;
+        String(const char * c_string);
+        virtual const class String to_string() const override;
     };
 }
 

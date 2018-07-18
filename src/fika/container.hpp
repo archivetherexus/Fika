@@ -17,7 +17,6 @@ namespace fika {
     };
     template<typename T> class Container {
         virtual Iterator<T> iterator() const = 0;
-        virtual void clear() = 0;
         virtual U64 count() const = 0;
     };
 }

@@ -5,13 +5,20 @@
 #include "container.hpp"
 
 namespace fika {
-    template<typename T> class IteratorState {};
+    template<typename T> struct IteratorState {
+        virtual IteratorState<T> *copy() const = 0;
+    };
     template<typename T> class Iterator {
     public:
         Iterator(ContainerResource<T> *resource, IteratorState<T> *state)
         : resource(resource)
         , state(state) {
             resource->reference_count++;
+        }
+        Iterator(const Iterator<T> &iterator) {
+            this->resource = iterator.resource;
+            this->state = iterator.state->copy();
+            this->resource->reference_count++;
         }
         ~Iterator() {
             resource->reference_count--;

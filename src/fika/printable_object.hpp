@@ -5,7 +5,7 @@
 namespace fika {
     class PrintableObject {
     public:
-        virtual const class String &to_string() const = 0;
+        virtual const class String to_string() const = 0;
     };
 }
 

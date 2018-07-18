@@ -11,7 +11,7 @@ namespace fika {
 
     class StandardInputOutputStream : public InputOutputStream {
     public:
-        virtual void print_string(const String &string) override;
+        virtual void print_string(const String string) override;
     };
 
     extern StandardInputOutputStream io;

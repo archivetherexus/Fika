@@ -2,12 +2,16 @@
 #ifndef FIKA_ARRAY_HPP
 #define FIKA_ARRAY_HPP
 
-#include "container.hpp"
+#include "mutable_container.hpp"
 
 namespace fika {
     template<typename T> class ArrayIteratorState : public IteratorState<T> {
     public:
         U64 i;
+        ArrayIteratorState(U64 i): i(i) {}
+        virtual IteratorState<T> *copy() const override {
+            return new ArrayIteratorState<T>(i); 
+        }
     };
     template<typename T> class ArrayResource : public ContainerResource<T> {
     public:
@@ -31,7 +35,7 @@ namespace fika {
             return state->i < array_size;
         }
     };
-    template<typename T> class Array : public Container<T> {
+    template<typename T> class Array : public MutableContainer<T> {
     public:
         Array(U64 array_size) {
             resource = new ArrayResource<T>(array_size);
@@ -44,7 +48,7 @@ namespace fika {
             }
         }
         virtual Iterator<T> iterator() const override {
-            return Iterator<T>(resource, new ArrayIteratorState<T>());
+            return Iterator<T>(resource, new ArrayIteratorState<T>(0));
         }
         virtual void clear() override {
             // FIXME: Implement later.

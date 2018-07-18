@@ -2,13 +2,17 @@
 #ifndef FIKA_FIXED_ARRAY_HPP
 #define FIKA_FIXED_ARRAY_HPP
 
-#include "container.hpp"
+#include "mutable_container.hpp"
 #include "iterator.hpp"
 
 namespace fika {
     template<U64 array_capacity, typename T> class FixedArrayIteratorState : public IteratorState<T> {
     public:
-        U64 i;
+        U64 i = 0;
+        FixedArrayIteratorState(U64 i): i(i) {}
+        virtual IteratorState<T> *copy() const override {
+            return new FixedArrayIteratorState<array_capacity, T>(i); 
+        }
     };
     template<U64 array_capacity, typename T> class FixedArrayResource : public ContainerResource<T> {
     public:
@@ -27,7 +31,7 @@ namespace fika {
         }
     };
 
-    template<U64 array_capacity, typename T> class FixedArray : public Container<T> {
+    template<U64 array_capacity, typename T> class FixedArray : public MutableContainer<T> {
     public:
         FixedArray() {
             resource = new FixedArrayResource<array_capacity, T>();
@@ -40,7 +44,7 @@ namespace fika {
             }
         }
         virtual Iterator<T> iterator() const override {
-            return Iterator<T>(resource, new FixedArrayIteratorState<array_capacity, T>());
+            return Iterator<T>(resource, new FixedArrayIteratorState<array_capacity, T>(0));
         }
         virtual void clear() override {
 

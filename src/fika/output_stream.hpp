@@ -5,7 +5,7 @@
 namespace fika {
     class OutputStream {
     public:
-        virtual void print_string(const class String &string) = 0;
+        virtual void print_string(const class String string) = 0;
         template <class... ObjectTypes> void print(const ObjectTypes... objects) {
             // TODO: Perhaps there is a better method?
             const PrintableObject *to_print[] = {&objects...};
