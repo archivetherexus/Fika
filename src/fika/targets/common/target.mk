@@ -1,0 +1,1 @@
+OBJECTS += src/fika/targets/common/string.o
