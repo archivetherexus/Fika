@@ -4,11 +4,18 @@
 #include "src/fika/fixed_array.hpp"
 #include "src/fika/array.hpp"
 #include "src/fika/immutable_array.hpp"
-
+#include "src/fika/pair.hpp"
+#include "src/fika/map.hpp"
 
 #include <cstdio>
 
 int main(int argc, char **args) {
+
+    auto m = fika::Map<fika::String, int>();
+
+    auto a = fika::Pair<int, int>(1, 2);
+    a.a + a.b;
+
     const fika::String str1 = "Hello ";
     const fika::String str2 = "World\n";
 
