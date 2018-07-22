@@ -9,7 +9,7 @@
 namespace fika {
     template<typename K, typename V> class MutableAssociativeArray : public AssociativeArray<K, V>, public MutableContainer<Pair<K, V>> {
     public:
-
+        virtual void set(K key, V value) = 0;
     };
 }
 

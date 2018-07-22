@@ -2,10 +2,12 @@
 #ifndef FIKA_OBJECT_HPP
 #define FIKA_OBJECT_HPP
 
-#include "printable_object.hpp"
+#include "fika/objects/printable_object.hpp"
+#include "fika/objects/hashable_object.hpp"
+#include "fika/objects/safe_object.hpp"
 
 namespace fika {
-    class Object : public PrintableObject {
+    class Object : public PrintableObject, public HashableObject, public SafeObject {
 
     };
 }

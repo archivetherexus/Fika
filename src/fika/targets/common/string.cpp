@@ -17,7 +17,15 @@ String::String(const char *c_string) {
     }
 }
 
-const String String::to_string() const {
+const class String String::to_string() const {
     return *this;
 }
 
+const Hash String::to_hash() const {
+    Hash hash = 0;
+    for(U64 i = 0; i < this->resource->array_size; i++) {
+        auto d = this->resource->data[i];
+        hash = d + (hash << 6) + (hash<< 16) - hash;
+    }
+    return hash;
+}

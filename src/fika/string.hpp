@@ -10,6 +10,7 @@ namespace fika {
     public:
         String(const char * c_string);
         virtual const class String to_string() const override;
+        virtual const Hash to_hash() const override;
     };
 }
 

@@ -4,7 +4,8 @@
 
 namespace fika {
     template<typename K, typename V> class AssociativeArray {
-
+    public:
+        virtual V get(K key) = 0;
     };
 }
 

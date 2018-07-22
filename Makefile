@@ -1,6 +1,6 @@
 
 OBJECTS += main.o
-CFLAGS += -g -nostdlib -Isrc
+CFLAGS += -g -nostdlib -Isrc -fmax-errors=1
 include src/fika/targets/linux/target.mk
 
 # Perhaps remove this too... In the future.

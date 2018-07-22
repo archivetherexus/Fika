@@ -2,6 +2,9 @@
 #ifndef FIKA_ARCH_TYPES_HPP
 #define FIKA_ARCH_TYPES_HPP
 
+
+// TODO: Perhaps move or rename this **file** to avoid name clashes...
+
 namespace fika {
     typedef signed char      I8;
     typedef signed short     I16;

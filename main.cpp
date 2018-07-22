@@ -11,10 +11,19 @@
 
 int main(int argc, char **args) {
 
-    auto m = fika::Map<fika::String, int>();
+    auto m = new fika::Map<int, int>();
+    m->set(2, 42);
+    printf("The get: %d\n", m->get(2));
 
-    auto a = fika::Pair<int, int>(1, 2);
-    a.a + a.b;
+    fika::to_hash(32);
+
+    delete m;
+
+    int *a = new int(1);
+    int *b = new int(2);
+
+    auto p = fika::Pair<int*, int*>(a, b);
+    *p.a + *p.b;
 
     const fika::String str1 = "Hello ";
     const fika::String str2 = "World\n";
