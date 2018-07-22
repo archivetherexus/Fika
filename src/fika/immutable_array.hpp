@@ -37,7 +37,7 @@ namespace fika {
             return state->i < array_size;
         }
     };
-    template<typename T> class ImmutableArray : public Container<T> {
+    template<typename T> class ImmutableArray : public ComparableObject, public Container<T> {
     public:
         ImmutableArray()
         : ImmutableArray(0) {
@@ -72,33 +72,24 @@ namespace fika {
             // FIXME: Implement later!
             return resource->array_size;
         }
-
-        /*
-
-        DOING THIS DOESN'T MAKE SENSE.
-        Why?
-        Well, haha, because these arrays are immutable.
-        But this code can be usefull for when array.hpp is implemented...
-
-        ImmutableArray<T> operator=(std::initializer_list<T> list) {
-            resource->reference_count--;
-            if (0 == resource->reference_count) { // FIXME: Convert to one liner.
-                delete resource;
+        virtual bool compare(ComparableObject *co) override {
+            if (co == this) {
+                return true;
+            } else if (auto other = dynamic_cast<ImmutableArray<T>*>(co)) {
+                ImmutableArrayResource<T>* r = other->resource;
+                if (r->array_size == resource->array_size) {
+                    return false;
+                }
+                for (U64 i = 0; i < r->array_size; i++) {
+                    if (r->data[i] != resource->data[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
             }
-            // This is somewhat inefficient... We could for instance check the current sign...
-
-            resource = new ImmutableArrayResource<T>(list.size());
-            resource->reference_count++;
-
-            int i = 0 ;
-            for (auto x : list) {
-                resource->data[i++] = x;
-            }
-
-
-            return *this; // FIXME: Is this the correct implementation?
         }
-        */
     protected:
         ImmutableArrayResource<T> *resource;
     };

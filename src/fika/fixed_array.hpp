@@ -37,6 +37,18 @@ namespace fika {
             resource = new FixedArrayResource<array_capacity, T>();
             resource->reference_count++;
         }
+        FixedArray(std::initializer_list<T> list) {
+            //static_assert(list.size() == array_capacity, "Incorrect size..."); // TODO: Better error message.
+            // https://stackoverflow.com/questions/5438671/static-assert-on-initializer-listsize
+            resource = new FixedArrayResource<array_capacity, T>(list.size());
+            resource->reference_count++;
+
+            int i = 0;
+            for (auto x : list) {
+                resource->data[i++] = x;
+            }
+    
+        }
         ~FixedArray() {
             resource->reference_count--;
             if (0 == resource->reference_count) { // FIXME: This could be merged into one statement.
@@ -51,6 +63,16 @@ namespace fika {
         }
         virtual U64 count() const override {
             return array_capacity;
+        }
+        FixedArray<array_capacity, T> operator=(std::initializer_list<T> list) {
+            int i = 0 ;
+            for (auto x : list) {
+                resource->data[i++] = x;
+                if (i >= array_capacity) {
+                    break;
+                }
+            }
+            return *this;
         }
     private:
         FixedArrayResource<array_capacity, T> *resource;

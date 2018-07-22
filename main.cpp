@@ -11,10 +11,18 @@
 
 int main(int argc, char **args) {
 
-    auto m = new fika::Map<int, int>();
-    m->set(2, 42);
-    printf("The get: %d\n", m->get(2));
 
+    auto arra1 = fika::Array<int>({32, 3});
+    arra1 = {1, 2, 3};
+
+    auto arra2 = fika::FixedArray<2, int>({1, 2});
+    arra2 = {3, 4};
+
+
+    auto m = new fika::Map<int, int>(-1);
+    m->set(2, 42);
+    m->set(5, 32);
+    printf("The get: %d, %d\n", m->get(2), m->get(5));
     fika::to_hash(32);
 
     delete m;

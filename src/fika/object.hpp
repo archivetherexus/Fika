@@ -5,9 +5,10 @@
 #include "fika/objects/printable_object.hpp"
 #include "fika/objects/hashable_object.hpp"
 #include "fika/objects/safe_object.hpp"
+#include "fika/objects/comparable_object.hpp"
 
 namespace fika {
-    class Object : public PrintableObject, public HashableObject, public SafeObject {
+    class Object : public PrintableObject, public HashableObject, public ComparableObject, public SafeObject {
 
     };
 }

@@ -4,6 +4,7 @@
 
 #include "mutable_associative_array.hpp"
 #include "iterator.hpp"
+#include "fika/objects/comparable_object.hpp"
 
 namespace fika {
     template<class K, typename V> class MapPoolEntry {
@@ -88,6 +89,13 @@ namespace fika {
             resource = new MapResource<K, V>(128);
             resource->reference_count++;
         }
+        Map(I64 pool_size) {
+            if (1 > pool_size) {
+                pool_size = 1;
+            }
+            resource = new MapResource<K, V>(pool_size);
+            resource->reference_count++;
+        }
         ~Map() {
             resource->reference_count--;
             if (0 == resource->reference_count) {
@@ -98,7 +106,7 @@ namespace fika {
             auto hash = to_hash<K>(key);
             auto *latest_entry = resource->pool[hash % resource->pool_size];
             while(latest_entry != nullptr) {
-                if (true) {// TODO: Check if they are equal!
+                if (compare(key, latest_entry->key)) {// TODO: Check if they are equal!
                     return latest_entry->value;
                 }
                 latest_entry = latest_entry->next;

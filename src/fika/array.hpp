@@ -41,6 +41,15 @@ namespace fika {
             resource = new ArrayResource<T>(array_size);
             resource->reference_count++;
         }
+        Array(std::initializer_list<T> list) {
+            resource = new ArrayResource<T>(list.size());
+            resource->reference_count++;
+
+            int i = 0;
+            for (auto x : list) {
+                resource->data[i++] = x;
+            }
+        }
         ~Array() {
             resource->reference_count--;
             if (0 == resource->reference_count) { // FIXME: Convert to one liner.
@@ -56,6 +65,17 @@ namespace fika {
         virtual U64 count() const override {
             // FIXME: Implement later!
             return 0;
+        }
+        Array<T> operator=(std::initializer_list<T> list) {
+            int i = 0 ;
+            const U64 array_capacity = resource->array_size;
+            for (auto x : list) {
+                resource->data[i++] = x;
+                if (i >= array_capacity) {
+                    break;
+                }
+            }
+            return *this;
         }
     private:
         ArrayResource<T> *resource;
