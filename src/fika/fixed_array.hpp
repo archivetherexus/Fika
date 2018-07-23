@@ -40,7 +40,7 @@ namespace fika {
         FixedArray(std::initializer_list<T> list) {
             //static_assert(list.size() == array_capacity, "Incorrect size..."); // TODO: Better error message.
             // https://stackoverflow.com/questions/5438671/static-assert-on-initializer-listsize
-            resource = new FixedArrayResource<array_capacity, T>(list.size());
+            resource = new FixedArrayResource<array_capacity, T>();
             resource->reference_count++;
 
             int i = 0;

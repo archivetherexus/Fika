@@ -73,7 +73,7 @@ namespace fika {
             auto state = static_cast<MapIteratorState<K, V>*>(uncasted_state);
             U64 i = state->pool_index;
             if (nullptr == state->current_entry) {
-                while(i < pool_size && nullptr != pool[i]) {
+                while(i < pool_size && nullptr == pool[i]) {
                     i++;
                 }
                 return i < pool_size;

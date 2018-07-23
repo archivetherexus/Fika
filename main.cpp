@@ -25,6 +25,12 @@ int main(int argc, char **args) {
     printf("The get: %d, %d\n", m->get(2), m->get(5));
     fika::to_hash(32);
 
+    auto iterator2 = m->iterator();
+    while(iterator2.has_next()) {
+        auto p = iterator2.next();
+        printf("%d: %d\n", p.a, p.b);
+    }
+
     delete m;
 
     int *a = new int(1);
