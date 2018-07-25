@@ -85,6 +85,7 @@ namespace fika {
 
     template<class K, typename V> class Map : public MutableAssociativeArray<K, V> {
     public:
+        // TODO: Create Map::create or Map::from to replace the existing constructors...
         Map() {
             resource = new MapResource<K, V>(128);
             resource->reference_count++;
