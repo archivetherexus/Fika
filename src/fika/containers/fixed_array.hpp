@@ -4,6 +4,7 @@
 
 #include "mutable_container.hpp"
 #include "fika/iterator.hpp"
+#include "fika/initializer_list.hpp"
 
 namespace fika {
     template<U64 array_capacity, typename T> class FixedArrayIteratorState : public IteratorState<T> {
@@ -17,12 +18,12 @@ namespace fika {
     template<U64 array_capacity, typename T> class FixedArrayResource : public ContainerResource<T> {
     public:
         T data[array_capacity];
-        virtual T next(IteratorState<T> *uncastedState) override {
+        virtual T next(IteratorState<T> *uncastedState, T *default_value) override {
             auto state = static_cast<FixedArrayIteratorState<array_capacity, T>*>(uncastedState);
             if (state->i < array_capacity) {
                 return data[state->i++];
             } else {
-                return 0; // FIXME: There must be better way! Perhaps exceptions? Or default values...
+                return *default_value;
             }
         }
         virtual bool has_next(IteratorState<T> *uncastedState) override {
@@ -33,21 +34,35 @@ namespace fika {
 
     template<U64 array_capacity, typename T> class FixedArray : public MutableContainer<T> {
     public:
-        FixedArray() {
+        static Array<T> fill(T t) {} {
             resource = new FixedArrayResource<array_capacity, T>();
-            resource->reference_count++;
+
+            for (U64 i = 0; i < array_capacity; i++) {
+                resource->data[i] = t;
+            }
+
+            return FixedArray<T>(resource);
         }
-        FixedArray(std::initializer_list<T> list) {
+        /*template<Length N> static Array<T> from(const T data[N]) {
             //static_assert(list.size() == array_capacity, "Incorrect size..."); // TODO: Better error message.
             // https://stackoverflow.com/questions/5438671/static-assert-on-initializer-listsize
-            resource = new FixedArrayResource<array_capacity, T>();
-            resource->reference_count++;
+            resource = new FixedArrayResource<T>(N);
+
+            for (U64 i = 0; i < N; i++) {
+                resource->data[i] = data[i];
+            }
+
+            return FixedArray<T>(resource);
+        }*/
+        static FixedArray<array_capacity, T> from(std::initializer_list<T> list) {
+            auto resource = new FixedArrayResource<array_capacity, T>(list.size());
 
             int i = 0;
-            for (auto x : list) {
-                resource->data[i++] = x;
+            for (auto e: list) {
+                resource->data[i++] = e;
             }
-    
+
+            return FixedArray<array_capacity, T>(resource);
         }
         ~FixedArray() {
             resource->reference_count--;
@@ -55,8 +70,8 @@ namespace fika {
                 delete resource;
             }
         }
-        virtual Iterator<T> iterator() const override {
-            return Iterator<T>(resource, new FixedArrayIteratorState<array_capacity, T>(0));
+        virtual Iterator<T> iterator(T default_value) const override {
+            return Iterator<T>(resource, new FixedArrayIteratorState<array_capacity, T>(0), default_value);
         }
         virtual void clear() override {
 
@@ -76,6 +91,10 @@ namespace fika {
         }
     private:
         FixedArrayResource<array_capacity, T> *resource;
+        FixedArray(FixedArrayResource<array_capacity, T> *resource)
+        : resource(resource) {
+            resource->reference_count++;
+        }
     };
 }
 

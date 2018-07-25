@@ -9,8 +9,7 @@ String::String(const char *c_string) {
     }
     const int length = iterate - c_string;
 
-    this->resource = new ImmutableArrayResource<U32>(length);
-    this->resource->reference_count++;
+    this->resource = new ImmutableArrayResource<U32>(1, length);
 
     for (int i = 0; i < length; i++) {
         this->resource->data[i] = c_string[i];

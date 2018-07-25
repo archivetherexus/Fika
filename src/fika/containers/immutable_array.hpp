@@ -2,9 +2,11 @@
 #ifndef FIKA_IMMUTABLE_ARRAY_HPP
 #define FIKA_IMMUTABLE_ARRAY_HPP
 
+#include "fika/empty.hpp"
 #include "fika/container.hpp"
-#include "fika/initializer_list.hpp"
 #include "fika/iterator.hpp"
+#include "fika/initializer_list.hpp"
+#include "fika/objects/comparable_object.hpp"
 
 namespace fika {
     template<typename T> class ImmutableArrayIteratorState : public IteratorState<T> {
@@ -20,16 +22,20 @@ namespace fika {
         U64 array_size;
         T *data = nullptr;
 
-        ImmutableArrayResource(U64 array_size)
-        : array_size(array_size) {
-            data = new T[array_size];
+        ImmutableArrayResource(U64 reference_count, U64 array_size)
+        : ContainerResource<T>(reference_count)
+        , array_size(array_size) {
+            data = reinterpret_cast<T*>(operator new(sizeof(T) * array_size));
         }
-        virtual T next(IteratorState<T> *uncastedState) override {
+        ~ImmutableArrayResource() {
+            delete data;
+        }
+        virtual T next(IteratorState<T> *uncastedState, T *default_value) override {
             auto state = static_cast<ImmutableArrayIteratorState<T>*>(uncastedState);
             if (state->i < array_size) {
                 return data[state->i++];
             } else {
-                return 0; // FIXME: There must be better way! Perhaps exceptions? Or default values...
+                return *default_value;
             }
         }
         virtual bool has_next(IteratorState<T> *uncastedState) override {
@@ -37,27 +43,48 @@ namespace fika {
             return state->i < array_size;
         }
     };
+
+    extern ImmutableArrayResource<Empty> *empty_immutable_array_resource;
+
     template<typename T> class ImmutableArray : public ComparableObject, public Container<T> {
     public:
-        ImmutableArray()
-        : ImmutableArray(0) {
+        static ImmutableArray<T> empty() {
+            return ImmutableArray<T>(reinterpret_cast<ImmutableArrayResource<T>*>(empty_immutable_array_resource));
         }
-        ImmutableArray(U64 array_size) {
-            resource = new ImmutableArrayResource<T>(array_size);
-            resource->reference_count++;
+        static ImmutableArray<T> fill(U64 array_size, T t) {
+            auto resource = new ImmutableArrayResource<T>(0, array_size);
+
+            for (U64 i = 0; i < array_size; i++) {
+                resource->data[i] = t;
+            }
+
+            return ImmutableArray<T>(resource);
         }
+        /*template<Length N> static ImmutableArray<T> from(const T data[N]) {
+            auto resource = new ImmutableArrayResource<T>(0, N);
+
+            for (U64 i = 0; i < N; i++) {
+                resource->data[i] = data[i];
+            }
+
+            return ImmutableArray<T>(resource);
+
+            TODO: Renable this some day.... Maybe detect GCC version??
+        }*/
+        static ImmutableArray<T> from(std::initializer_list<T> list) {
+            auto resource = new ImmutableArrayResource<T>(0, list.size());
+
+            int i = 0;
+            for (auto e: list) {
+                resource->data[i++] = e;
+            }
+
+            return ImmutableArray<T>(resource);
+        }
+
         ImmutableArray(const ImmutableArray<T> &immutable_array) {
             this->resource = immutable_array.resource;
             this->resource->reference_count++;
-        }
-        ImmutableArray(std::initializer_list<T> list) {
-            resource = new ImmutableArrayResource<T>(list.size());
-            resource->reference_count++;
-
-            int i = 0;
-            for (auto x : list) {
-                resource->data[i++] = x;
-            }
         }
         ~ImmutableArray() {
             resource->reference_count--;
@@ -65,8 +92,8 @@ namespace fika {
                 delete resource;
             }
         }
-        virtual Iterator<T> iterator() const override {
-            return Iterator<T>(resource, new ImmutableArrayIteratorState<T>(0));
+        virtual Iterator<T> iterator(T default_value) const override {
+            return Iterator<T>(resource, new ImmutableArrayIteratorState<T>(0), default_value);
         }
         virtual U64 count() const override {
             // FIXME: Implement later!
@@ -92,6 +119,15 @@ namespace fika {
         }
     protected:
         ImmutableArrayResource<T> *resource;
+        ImmutableArray(ImmutableArrayResource<T> *resource)
+        : resource(resource) {
+            resource->reference_count++;
+        }
+        ImmutableArray()
+        : resource(nullptr) {
+
+        }
+
     };
 }
 

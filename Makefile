@@ -1,6 +1,8 @@
 
 OBJECTS += main.o
-CFLAGS += -g -nostdlib -Isrc -fmax-errors=1
+CFLAGS += -g -nostdlib -Isrc -std=c++11
+CC ?= g++ -fmax-errors=1
+#CC ?= clang++ -ferror-limit=1
 include src/fika/targets/linux/target.mk
 
 # Perhaps remove this too... In the future.

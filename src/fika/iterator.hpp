@@ -7,17 +7,20 @@
 namespace fika {
     template<typename T> struct IteratorState {
         virtual IteratorState<T> *copy() const = 0;
+        virtual ~IteratorState() {};
     };
     template<typename T> class Iterator {
     public:
-        Iterator(ContainerResource<T> *resource, IteratorState<T> *state)
+        Iterator(ContainerResource<T> *resource, IteratorState<T> *state, T default_value)
         : resource(resource)
-        , state(state) {
+        , state(state)
+        , default_value(default_value) {
             resource->reference_count++;
         }
-        Iterator(const Iterator<T> &iterator) {
-            this->resource = iterator.resource;
-            this->state = iterator.state->copy();
+        Iterator(const Iterator<T> &iterator)
+        : resource(iterator.resource)
+        , state(iterator.state->copy())
+        , default_value(iterator.default_value) {
             this->resource->reference_count++;
         }
         ~Iterator() {
@@ -28,7 +31,7 @@ namespace fika {
             delete state;
         }
         T next() {
-            return resource->next(state);
+            return resource->next(state, &default_value);
         };
         bool has_next() {
             return resource->has_next(state);
@@ -36,6 +39,7 @@ namespace fika {
     private:
         ContainerResource<T> *resource;
         IteratorState<T> *state;
+        T default_value;
     };
 }
 

@@ -6,5 +6,5 @@ bool fika::compare(U64 a, U64 b) {
     return a == b;
 } 
 bool fika::compare(ComparableObject *a, ComparableObject *b) {
-    a->compare(b);
+    return a->compare(b);
 }

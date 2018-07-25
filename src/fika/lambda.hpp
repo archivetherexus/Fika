@@ -3,49 +3,53 @@
 #define FIKA_LAMBDA_HPP
 
 namespace fika {
-    template <typename T> class Lambda;
+    template<typename T> class Lambda;
 
-    template <typename ReturnValue, typename... Args> class Lambda<ReturnValue(Args...)> {
-public:
-	template <typename T> Lambda& operator=(T t) {
-		lambda_container = new CallableT<T>(t);
-		return *this;
-	}
-
-	ReturnValue operator()(Args... args) const {
-		//assert(lambda_container); // TODO: Better error reporting.
-		return lambda_container->Invoke(args...);
-	}
-
-    ~Lambda() {
-        delete lambda_container;
-    }
-
-private:
-	class ICallable {
+    template<typename R, typename... A> class Lambda<R(A...)> {
 	public:
-		virtual ~ICallable() = default;
-		virtual ReturnValue Invoke(Args...) = 0;
-	};
-
-	template <typename T> class CallableT : public ICallable {
-	public:
-		CallableT(const T& t)
-			: t_(t) {
+		template<typename T> Lambda(T t) {
+			lambda_container = new LambdaContainerWithT<T>(t);
 		}
-
-		~CallableT() override = default;
-
-		ReturnValue Invoke(Args... args) override {
-			return t_(args...);
+		template<typename T> Lambda &operator=(T t) {
+			lambda_container = new LambdaContainerWithT<T>(t);
+			return *this;
 		}
-
+		Lambda(const Lambda &other) {
+			lambda_container = other.lambda_container->copy();
+		}
+		R operator()(A... args) const {
+			//assert(lambda_container); // TODO: Better error reporting.
+			return lambda_container->invoke(args...);
+		}
+		~Lambda() {
+			if (lambda_container) /* TODO: This should normally, not be necessary. */ {
+				delete lambda_container;
+			}
+		}
 	private:
-		T t_;
-	};
+		class LambdaContainer {
+		public:
+			virtual ~LambdaContainer() = default;
+			virtual LambdaContainer *copy() = 0;
+			virtual R invoke(A... args) = 0;
+		};
+		template<typename T> class LambdaContainerWithT : public LambdaContainer {
+		public:
+			LambdaContainerWithT(const T &lambda)
+				: lambda(lambda) {
+			}
+			LambdaContainer *copy() override {
+				return new LambdaContainerWithT<T>(lambda);
+			} 
+			~LambdaContainerWithT() override = default;
+			R invoke(A... args) override {
+				return lambda(args...);
+			}
+			T lambda;
+		};
 
-	ICallable *lambda_container;
-};
+		LambdaContainer *lambda_container;
+	};
 }
 
 #endif

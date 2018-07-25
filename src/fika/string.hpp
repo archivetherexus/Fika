@@ -12,7 +12,7 @@ namespace fika {
         virtual const class String to_string() const override;
         virtual const Hash to_hash() const override;
         virtual bool compare(ComparableObject *co) override {
-            return ImmutableArray::compare(co);
+            return ImmutableArray<U32>::compare(co);
         }
     };
 }

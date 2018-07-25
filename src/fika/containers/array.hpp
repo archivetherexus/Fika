@@ -3,6 +3,8 @@
 #define FIKA_ARRAY_HPP
 
 #include "mutable_container.hpp"
+#include "fika/iterator.hpp"
+#include "fika/initializer_list.hpp"
 
 namespace fika {
     template<typename T> class ArrayIteratorState : public IteratorState<T> {
@@ -19,15 +21,16 @@ namespace fika {
         T *data = nullptr;
 
         ArrayResource(U64 array_size)
-        : array_size(array_size) {
-            data = new T[array_size];
+        : ContainerResource<T>(0)
+        , array_size(array_size) {
+            data = reinterpret_cast<T*>(operator new(sizeof(T) * array_size));
         }
-        virtual T next(IteratorState<T> *uncastedState) override {
+        virtual T next(IteratorState<T> *uncastedState, T *default_value) override {
             auto state = static_cast<ArrayIteratorState<T>*>(uncastedState);
             if (state->i < array_size) {
                 return data[state->i++];
             } else {
-                return 0; // FIXME: There must be better way! Perhaps exceptions? Or default values...
+                return *default_value;
             }
         }
         virtual bool has_next(IteratorState<T> *uncastedState) override {
@@ -37,18 +40,33 @@ namespace fika {
     };
     template<typename T> class Array : public MutableContainer<T> {
     public:
-        Array(U64 array_size) {
-            resource = new ArrayResource<T>(array_size);
-            resource->reference_count++;
+        static Array<T> fill(U64 array_size, T t) {
+            auto resource = new ArrayResource<T>(array_size);
+
+            for (U64 i = 0; i < array_size; i++) {
+                resource->data[i] = t;
+            }
+
+            return Array<T>(resource);
         }
-        Array(std::initializer_list<T> list) {
-            resource = new ArrayResource<T>(list.size());
-            resource->reference_count++;
+        /*template<Length N> static Array<T> from(const T data[N]) {
+            auto resource = new ArrayResource<T>(N);
+
+            for (U64 i = 0; i < N; i++) {
+                resource->data[i] = data[i];
+            }
+
+            return Array<T>(resource);
+        }*/
+        static Array<T> from(std::initializer_list<T> list) {
+            auto resource = new ArrayResource<T>(list.size());
 
             int i = 0;
-            for (auto x : list) {
-                resource->data[i++] = x;
+            for (auto e: list) {
+                resource->data[i++] = e;
             }
+
+            return Array<T>(resource);
         }
         ~Array() {
             resource->reference_count--;
@@ -56,8 +74,8 @@ namespace fika {
                 delete resource;
             }
         }
-        virtual Iterator<T> iterator() const override {
-            return Iterator<T>(resource, new ArrayIteratorState<T>(0));
+        virtual Iterator<T> iterator(T default_value) const override {
+            return Iterator<T>(resource, new ArrayIteratorState<T>(0), default_value);
         }
         virtual void clear() override {
             // FIXME: Implement later.
@@ -79,6 +97,10 @@ namespace fika {
         }
     private:
         ArrayResource<T> *resource;
+        Array(ArrayResource<T> *resource)
+        : resource(resource) {
+            resource->reference_count++;
+        }
     };
 }
 

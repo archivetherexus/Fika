@@ -1,3 +1,35 @@
+#include "src/fika/lambda.hpp"
+#include "src/fika/containers/array.hpp"
+
+int main(int argc, char **args) {
+
+    auto ll3 = new fika::Lambda<int()>([](){return 3;});
+
+    auto ll4 = fika::Lambda<int()>([](){return 3;});
+
+    //auto l3 = new fika::Lambda<int(void)>[32]{fika::Lambda<int(void)>(ll3)};
+
+    (*ll3)();
+
+    ll4();
+
+    auto l3 = fika::Array<fika::Lambda<int(void)>>::fill(32, ll4);
+
+    //const int i[] = {1, 2};
+
+    auto l4 = fika::Array<int>::from({1, 2});
+
+    auto l5 = fika::Array<int>::fill(32, 4);
+
+    return 0;
+
+
+
+
+}
+
+#if 0
+
 #include "src/fika/initializer_list.hpp"
 
 #include "src/fika/io.hpp"
@@ -13,9 +45,20 @@ int main(int argc, char **args) {
 
     auto l = []() {return 0;};
 
-    fika::Lambda<int(void)> l2;
+    fika::Lambda<int(void)> l2 = [](){return 2;};
     l2 = [](){return 1;};
 
+    auto ll3 = fika::Lambda<int(void)>([](){return 3;});
+
+    //auto l3 = new fika::Lambda<int(void)>[32]{fika::Lambda<int(void)>(ll3)};
+
+    auto l3 = fika::Array<fika::Lambda<int(void)>>(32, ll3);
+/*
+    auto ii2 = l3.iterator();
+    while(ii2.has_next()) {
+        printf("Ok: %d\n", ii2.next()());
+    }   
+*/
     // TODO: Allow this:
     // fika::Lambda<int(void)> l2 = [](){return 1;};
 
@@ -93,3 +136,5 @@ int main(int argc, char **args) {
 
     return 0;
 }
+
+#endif
