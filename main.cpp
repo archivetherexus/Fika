@@ -6,10 +6,20 @@
 #include "src/fika/containers/immutable_array.hpp"
 #include "src/fika/pair.hpp"
 #include "src/fika/containers/map.hpp"
-
+#include "src/fika/lambda.hpp"
 #include <cstdio>
 
 int main(int argc, char **args) {
+
+    auto l = []() {return 0;};
+
+    fika::Lambda<int(void)> l2;
+    l2 = [](){return 1;};
+
+    // TODO: Allow this:
+    // fika::Lambda<int(void)> l2 = [](){return 1;};
+
+    printf("Test: %d\n", l2());
 
 
     auto arra1 = fika::Array<int>({32, 3});
