@@ -3,7 +3,7 @@
 #define FIKA_FIXED_ARRAY_HPP
 
 #include "mutable_container.hpp"
-#include "iterator.hpp"
+#include "fika/iterator.hpp"
 
 namespace fika {
     template<U64 array_capacity, typename T> class FixedArrayIteratorState : public IteratorState<T> {

@@ -3,8 +3,8 @@
 #define FIKA_MAP_HPP
 
 #include "mutable_associative_array.hpp"
-#include "iterator.hpp"
 #include "fika/objects/comparable_object.hpp"
+#include "fika/iterator.hpp"
 
 namespace fika {
     template<class K, typename V> class MapPoolEntry {
@@ -131,6 +131,7 @@ namespace fika {
                     next = x->next;
                     delete x;
                 }
+                resource->pool[i] = nullptr;
             }
             resource->elements = 0;
         };

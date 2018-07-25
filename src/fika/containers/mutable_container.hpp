@@ -2,7 +2,7 @@
 #ifndef FIKA_MUTABLE_CONTAINER_HPP
 #define FIKA_MUTABLE_CONTAINER_HPP
 
-#include "container.hpp"
+#include "fika/container.hpp"
 
 namespace fika {
     template<typename T> class MutableContainer : public Container<T> {

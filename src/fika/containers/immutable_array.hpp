@@ -2,9 +2,9 @@
 #ifndef FIKA_IMMUTABLE_ARRAY_HPP
 #define FIKA_IMMUTABLE_ARRAY_HPP
 
-#include "container.hpp"
-#include "initializer_list.hpp"
-#include "iterator.hpp"
+#include "fika/container.hpp"
+#include "fika/initializer_list.hpp"
+#include "fika/iterator.hpp"
 
 namespace fika {
     template<typename T> class ImmutableArrayIteratorState : public IteratorState<T> {

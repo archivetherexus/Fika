@@ -3,7 +3,7 @@
 #define FIKA_STRING_HPP
 
 #include "object.hpp"
-#include "immutable_array.hpp"
+#include "fika/containers/immutable_array.hpp"
 
 namespace fika {
     class String : public Object, public ImmutableArray<U32> {

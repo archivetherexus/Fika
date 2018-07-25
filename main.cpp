@@ -1,11 +1,11 @@
 #include "src/fika/initializer_list.hpp"
 
 #include "src/fika/io.hpp"
-#include "src/fika/fixed_array.hpp"
-#include "src/fika/array.hpp"
-#include "src/fika/immutable_array.hpp"
+#include "src/fika/containers/fixed_array.hpp"
+#include "src/fika/containers/array.hpp"
+#include "src/fika/containers/immutable_array.hpp"
 #include "src/fika/pair.hpp"
-#include "src/fika/map.hpp"
+#include "src/fika/containers/map.hpp"
 
 #include <cstdio>
 
@@ -28,6 +28,22 @@ int main(int argc, char **args) {
     auto iterator2 = m->iterator();
     while(iterator2.has_next()) {
         auto p = iterator2.next();
+        printf("%d: %d\n", p.a, p.b);
+    }
+
+    m->clear();
+
+    auto iterator3 = m->iterator();
+    while(iterator3.has_next()) {
+        auto p = iterator3.next();
+        printf("%d: %d\n", p.a, p.b);
+    }
+
+    m->set(999, 43);
+
+    auto iterator4 = m->iterator();
+    while(iterator4.has_next()) {
+        auto p = iterator4.next();
         printf("%d: %d\n", p.a, p.b);
     }
 
