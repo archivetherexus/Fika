@@ -28,7 +28,7 @@ namespace fika {
             data = reinterpret_cast<T*>(operator new(sizeof(T) * array_size));
         }
         ~ImmutableArrayResource() {
-            delete data;
+            operator delete(reinterpret_cast<void*>(data));
         }
         virtual T next(IteratorState<T> *uncastedState, T *default_value) override {
             auto state = static_cast<ImmutableArrayIteratorState<T>*>(uncastedState);
@@ -80,6 +80,14 @@ namespace fika {
             }
 
             return ImmutableArray<T>(resource);
+        }
+        ImmutableArray<T>(std::initializer_list<T> list) {
+            resource = new ImmutableArrayResource<T>(0, list.size());
+
+            int i = 0;
+            for (auto e: list) {
+                resource->data[i++] = e;
+            }
         }
 
         ImmutableArray(const ImmutableArray<T> &immutable_array) {

@@ -1,5 +1,13 @@
-#include "src/fika/lambda.hpp"
+#include "src/fika/initializer_list.hpp"
+
+#include "src/fika/io.hpp"
+#include "src/fika/containers/fixed_array.hpp"
 #include "src/fika/containers/array.hpp"
+#include "src/fika/containers/immutable_array.hpp"
+#include "src/fika/pair.hpp"
+#include "src/fika/containers/map.hpp"
+#include "src/fika/lambda.hpp"
+#include <cstdio>
 
 int main(int argc, char **args) {
 
@@ -21,86 +29,43 @@ int main(int argc, char **args) {
 
     auto l5 = fika::Array<int>::fill(32, 4);
 
-    return 0;
-
-
-
-
-}
-
-#if 0
-
-#include "src/fika/initializer_list.hpp"
-
-#include "src/fika/io.hpp"
-#include "src/fika/containers/fixed_array.hpp"
-#include "src/fika/containers/array.hpp"
-#include "src/fika/containers/immutable_array.hpp"
-#include "src/fika/pair.hpp"
-#include "src/fika/containers/map.hpp"
-#include "src/fika/lambda.hpp"
-#include <cstdio>
-
-int main(int argc, char **args) {
-
-    auto l = []() {return 0;};
-
-    fika::Lambda<int(void)> l2 = [](){return 2;};
-    l2 = [](){return 1;};
-
-    auto ll3 = fika::Lambda<int(void)>([](){return 3;});
-
-    //auto l3 = new fika::Lambda<int(void)>[32]{fika::Lambda<int(void)>(ll3)};
-
-    auto l3 = fika::Array<fika::Lambda<int(void)>>(32, ll3);
-/*
-    auto ii2 = l3.iterator();
-    while(ii2.has_next()) {
-        printf("Ok: %d\n", ii2.next()());
-    }   
-*/
-    // TODO: Allow this:
-    // fika::Lambda<int(void)> l2 = [](){return 1;};
-
-    printf("Test: %d\n", l2());
-
-
-    auto arra1 = fika::Array<int>({32, 3});
+    auto arra1 = fika::Array<int>::from({32, 3});
     arra1 = {1, 2, 3};
 
-    auto arra2 = fika::FixedArray<2, int>({1, 2});
+    auto arra2 = fika::FixedArray<2, int>::from({1, 2});
     arra2 = {3, 4};
 
 
-    auto m = new fika::Map<int, int>(-1);
-    m->set(2, 42);
-    m->set(5, 32);
-    printf("The get: %d, %d\n", m->get(2), m->get(5));
+    auto m = fika::Map<int, int>::create(-1);
+    m.set(2, 42);
+    m.set(5, 32);
+    printf("The get: %d, %d\n", m.get(2), m.get(5));
     fika::to_hash(32);
 
-    auto iterator2 = m->iterator();
+    auto iterator2 = m.iterator(fika::Pair<int, int>(2, 3));
     while(iterator2.has_next()) {
         auto p = iterator2.next();
         printf("%d: %d\n", p.a, p.b);
     }
 
-    m->clear();
+    m.clear();
 
-    auto iterator3 = m->iterator();
+    auto iterator3 = m.iterator(fika::Pair<int, int>(2, 3));
     while(iterator3.has_next()) {
         auto p = iterator3.next();
         printf("%d: %d\n", p.a, p.b);
     }
 
-    m->set(999, 43);
+    m.set(999, 43);
 
-    auto iterator4 = m->iterator();
+    auto iterator4 = m.iterator(fika::Pair<int, int>(2, 3));
     while(iterator4.has_next()) {
         auto p = iterator4.next();
         printf("%d: %d\n", p.a, p.b);
     }
 
-    delete m;
+    auto p2 = iterator4.next();
+    printf("Default value: %d, %d\n", p2.a, p2.b);
 
     int *a = new int(1);
     int *b = new int(2);
@@ -114,21 +79,21 @@ int main(int argc, char **args) {
     fika::io.print(str1);
     fika::io.print(str1, str2);
 
-    const fika::FixedArray<32, int> arr1;
+    auto arr1 = fika::FixedArray<32, int>();
 
-    const fika::Array<int> arr2(32);
+    auto arr2 = fika::Array<int>::create(32);
 
-    const fika::ImmutableArray<int> arr3(32);
+    auto arr3 = fika::ImmutableArray<int>::from({32});
 
     fika::ImmutableArray<int> arrs = {42, 14, 123};
-    auto iterator = arrs.iterator();
+    auto iterator = arrs.iterator(0);
     while(iterator.has_next()) {
         printf("From immutable array: %d\n", iterator.next());
     }
 
-    arr1.iterator().next();
-    arr2.iterator().next();
-    arr3.iterator().next();
+    arr1.iterator(1).next();
+    arr2.iterator(1).next();
+    arr3.iterator(1).next();
 
     for(int i: {1, 2, 3, 4, 5}) {
         printf("OK: %d\n", i);
@@ -136,5 +101,3 @@ int main(int argc, char **args) {
 
     return 0;
 }
-
-#endif

@@ -30,18 +30,22 @@ namespace fika {
             auto state = static_cast<FixedArrayIteratorState<array_capacity, T>*>(uncastedState);
             return state->i < array_capacity;
         }
+        FixedArrayResource()
+        : ContainerResource<T>(0) {
+
+        }
     };
 
     template<U64 array_capacity, typename T> class FixedArray : public MutableContainer<T> {
     public:
-        static Array<T> fill(T t) {} {
-            resource = new FixedArrayResource<array_capacity, T>();
+        static FixedArray<array_capacity, T> fill(T t) {
+            auto resource = new FixedArrayResource<array_capacity, T>;
 
             for (U64 i = 0; i < array_capacity; i++) {
                 resource->data[i] = t;
             }
 
-            return FixedArray<T>(resource);
+            return FixedArray<array_capacity, T>(resource);
         }
         /*template<Length N> static Array<T> from(const T data[N]) {
             //static_assert(list.size() == array_capacity, "Incorrect size..."); // TODO: Better error message.
@@ -55,7 +59,7 @@ namespace fika {
             return FixedArray<T>(resource);
         }*/
         static FixedArray<array_capacity, T> from(std::initializer_list<T> list) {
-            auto resource = new FixedArrayResource<array_capacity, T>(list.size());
+            auto resource = new FixedArrayResource<array_capacity, T>;
 
             int i = 0;
             for (auto e: list) {
@@ -63,6 +67,10 @@ namespace fika {
             }
 
             return FixedArray<array_capacity, T>(resource);
+        }
+        FixedArray()
+        : FixedArray(new FixedArrayResource<array_capacity, T>) {
+
         }
         ~FixedArray() {
             resource->reference_count--;

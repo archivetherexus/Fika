@@ -5,6 +5,7 @@
 #include "mutable_associative_array.hpp"
 #include "fika/objects/comparable_object.hpp"
 #include "fika/iterator.hpp"
+#include "fika/pair.hpp"
 
 namespace fika {
     template<class K, typename V> class MapPoolEntry {
@@ -44,8 +45,14 @@ namespace fika {
         U64 pool_size;
         U64 elements;
         MapResource(U64 pool_size)
-        : pool_size(pool_size) {
+        : ContainerResource<Pair<K, V>>(0)
+        , pool_size(pool_size) {
             pool = new MapPoolEntry<K, V>*[pool_size];
+
+            // TODO: Is this really necessary?
+            for (U64 i = 0; i < pool_size; i++) {
+                pool[i] = nullptr;
+            }
         }
         ~MapResource() {
             for (U64 i = 0; i < pool_size; i++) {
@@ -56,11 +63,14 @@ namespace fika {
                     entry = next;
                 }
             }
-            delete pool; // FIXME: Check: does this free just one node, or all of it? 
+            delete pool;
         }
-        virtual Pair<K, V> next(IteratorState<Pair<K, V>> *uncasted_state) {
+        virtual Pair<K, V> next(IteratorState<Pair<K, V>> *uncasted_state, Pair<K, V> *default_value) {
             auto *state = static_cast<MapIteratorState<K, V>*>(uncasted_state);
             while (nullptr == state->current_entry) {
+                if (state->pool_index >= pool_size) {
+                    return *default_value;
+                }
                 state->current_entry = pool[state->pool_index];
                 state->pool_index++;
             }
@@ -85,17 +95,14 @@ namespace fika {
 
     template<class K, typename V> class Map : public MutableAssociativeArray<K, V> {
     public:
-        // TODO: Create Map::create or Map::from to replace the existing constructors...
-        Map() {
-            resource = new MapResource<K, V>(128);
-            resource->reference_count++;
+        static Map<K, V> create() {
+            return Map<K, V>(new MapResource<K, V>(128));
         }
-        Map(I64 pool_size) {
+        static Map<K, V> create(I64 pool_size) {
             if (1 > pool_size) {
                 pool_size = 1;
             }
-            resource = new MapResource<K, V>(pool_size);
-            resource->reference_count++;
+            return Map<K, V>(new MapResource<K, V>((U64)pool_size));
         }
         ~Map() {
             resource->reference_count--;
@@ -107,7 +114,7 @@ namespace fika {
             auto hash = to_hash<K>(key);
             auto *latest_entry = resource->pool[hash % resource->pool_size];
             while(latest_entry != nullptr) {
-                if (compare(key, latest_entry->key)) {// TODO: Check if they are equal!
+                if (compare(key, latest_entry->key)) {
                     return latest_entry->value;
                 }
                 latest_entry = latest_entry->next;
@@ -118,8 +125,8 @@ namespace fika {
             auto **latest_entry = &resource->pool[hash % resource->pool_size];
             *latest_entry = new MapPoolEntry<K, V>(key, value, *latest_entry);
         }
-        virtual Iterator<Pair<K, V>> iterator() const {
-            return Iterator<Pair<K, V>>(resource, new MapIteratorState<K, V>(0, nullptr));
+        virtual Iterator<Pair<K, V>> iterator(Pair<K, V> default_value) const {
+            return Iterator<Pair<K, V>>(resource, new MapIteratorState<K, V>(0, nullptr), default_value);
         };
         virtual U64 count() const {
             return resource->elements;
@@ -139,6 +146,10 @@ namespace fika {
         Map &operator = (const Map &) = default;
     private:
         MapResource<K, V> *resource;
+        Map(MapResource<K, V> *resource)
+        : resource(resource) {
+            resource->reference_count++;
+        }
     };
 }
 

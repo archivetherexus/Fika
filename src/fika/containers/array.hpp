@@ -49,15 +49,6 @@ namespace fika {
 
             return Array<T>(resource);
         }
-        /*template<Length N> static Array<T> from(const T data[N]) {
-            auto resource = new ArrayResource<T>(N);
-
-            for (U64 i = 0; i < N; i++) {
-                resource->data[i] = data[i];
-            }
-
-            return Array<T>(resource);
-        }*/
         static Array<T> from(std::initializer_list<T> list) {
             auto resource = new ArrayResource<T>(list.size());
 
@@ -67,6 +58,9 @@ namespace fika {
             }
 
             return Array<T>(resource);
+        }
+        static Array<T> create(U64 array_size) {
+            return Array<T>(new ArrayResource<T>(array_size));
         }
         ~Array() {
             resource->reference_count--;
