@@ -1,12 +1,10 @@
-#include "src/fika/initializer_list.hpp"
-
+#include "src/fika/pair.hpp"
+#include "src/fika/lambda.hpp"
 #include "src/fika/io.hpp"
 #include "src/fika/containers/fixed_array.hpp"
 #include "src/fika/containers/array.hpp"
 #include "src/fika/containers/immutable_array.hpp"
-#include "src/fika/pair.hpp"
 #include "src/fika/containers/map.hpp"
-#include "src/fika/lambda.hpp"
 #include <cstdio>
 
 int main(int argc, char **args) {
@@ -15,8 +13,6 @@ int main(int argc, char **args) {
 
     auto ll4 = fika::Lambda<int()>([](){return 3;});
 
-    //auto l3 = new fika::Lambda<int(void)>[32]{fika::Lambda<int(void)>(ll3)};
-
     (*ll3)();
 
     delete ll3;
@@ -24,8 +20,6 @@ int main(int argc, char **args) {
     ll4();
 
     auto l3 = fika::Array<fika::Lambda<int(void)>>::fill(32, ll4);
-
-    //const int i[] = {1, 2};
 
     auto l4 = fika::Array<int>::from({1, 2});
 

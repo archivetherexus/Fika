@@ -4,6 +4,8 @@
 
 #include "container.hpp"
 
+#include <cstdio>
+
 namespace fika {
     template<typename T> struct IteratorState {
         virtual IteratorState<T> *copy() const = 0;

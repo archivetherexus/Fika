@@ -8,7 +8,7 @@ namespace fika {
     typedef U64 Hash;
     class HashableObject {
     public:
-        virtual const Hash to_hash() const = 0;
+        virtual Hash to_hash() const = 0;
     };
     class ToHashFunctions {
     public:

@@ -81,9 +81,8 @@ namespace fika {
 
             return ImmutableArray<T>(resource);
         }
-        ImmutableArray<T>(std::initializer_list<T> list) {
-            resource = new ImmutableArrayResource<T>(0, list.size());
-
+        ImmutableArray<T>(std::initializer_list<T> list)
+        : ImmutableArray(new ImmutableArrayResource<T>(0, list.size())) {
             int i = 0;
             for (auto e: list) {
                 resource->data[i++] = e;

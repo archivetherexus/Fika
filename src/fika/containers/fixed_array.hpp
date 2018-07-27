@@ -69,8 +69,11 @@ namespace fika {
             return FixedArray<array_capacity, T>(resource);
         }
         FixedArray()
-        : FixedArray(new FixedArrayResource<array_capacity, T>) {
-
+        : FixedArray(new FixedArrayResource<array_capacity, T>()) {
+        }
+        FixedArray(const FixedArray<array_capacity, T> &other)
+        : FixedArray(other.resource) {
+            // TODO: Could we move the copy constructor to the base class?
         }
         ~FixedArray() {
             resource->reference_count--;
@@ -87,8 +90,9 @@ namespace fika {
         virtual U64 count() const override {
             return array_capacity;
         }
+        
         FixedArray<array_capacity, T> operator=(std::initializer_list<T> list) {
-            int i = 0 ;
+            U64 i = 0 ;
             for (auto x : list) {
                 resource->data[i++] = x;
                 if (i >= array_capacity) {

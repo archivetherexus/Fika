@@ -67,6 +67,9 @@ namespace fika {
         static Array<T> create(U64 array_size) {
             return Array<T>(new ArrayResource<T>(array_size));
         }
+        Array(const Array<T> &other)
+        : Array(other.resource) {
+        }
         ~Array() {
             resource->reference_count--;
             if (0 == resource->reference_count) { // FIXME: Convert to one liner.
@@ -84,7 +87,7 @@ namespace fika {
             return 0;
         }
         Array<T> operator=(std::initializer_list<T> list) {
-            int i = 0 ;
+            U64 i = 0 ;
             const U64 array_capacity = resource->array_size;
             for (auto x : list) {
                 resource->data[i++] = x;

@@ -63,7 +63,7 @@ namespace fika {
                     entry = next;
                 }
             }
-            delete pool;
+            delete[] pool;
         }
         virtual Pair<K, V> next(IteratorState<Pair<K, V>> *uncasted_state, Pair<K, V> *default_value) {
             auto *state = static_cast<MapIteratorState<K, V>*>(uncasted_state);
@@ -119,6 +119,8 @@ namespace fika {
                 }
                 latest_entry = latest_entry->next;
             }
+
+            // TODO: Add default value!
         }
         virtual void set(K key, V value) {
             auto hash = to_hash<K>(key);
