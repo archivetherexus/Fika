@@ -110,6 +110,10 @@ namespace fika {
                 delete resource;
             }
         }
+        Map(const Map<K, V> &other)
+        : Map(other.resource) {
+
+        }
         virtual V get(K key) {
             auto hash = to_hash<K>(key);
             auto *latest_entry = resource->pool[hash % resource->pool_size];

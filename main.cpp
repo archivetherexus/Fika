@@ -9,6 +9,9 @@
 
 int main(int argc, char **args) {
 
+    (void)argc;
+    (void)args;
+
     auto ll3 = new fika::Lambda<int()>([](){return 3;});
 
     auto ll4 = fika::Lambda<int()>([](){return 3;});
@@ -37,6 +40,8 @@ int main(int argc, char **args) {
     m.set(5, 32);
     printf("The get: %d, %d\n", m.get(2), m.get(5));
     fika::to_hash(32);
+
+    auto m2 = m;
 
     auto iterator2 = m.iterator(fika::Pair<int, int>(2, 3));
     while(iterator2.has_next()) {
@@ -67,7 +72,7 @@ int main(int argc, char **args) {
     int *b = new int(2);
 
     auto p = fika::Pair<int*, int*>(a, b);
-    *p.a + *p.b;
+    printf("Result: %d", *p.a + *p.b);
 
     const fika::String str1 = "Hello ";
     const fika::String str2 = "World\n";
