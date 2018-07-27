@@ -133,11 +133,11 @@ namespace fika {
         };
         virtual void clear() {
             for(U64 i = 0; i < resource->pool_size; i++) {
-                MapPoolEntry<K, V> *pool_node = resource->pool[i];
-                MapPoolEntry<K, V> *next = nullptr;
-                for (auto x = pool_node->next; x != nullptr; x = next) {
-                    next = x->next;
-                    delete x;
+                auto *entry = resource->pool[i];
+                while (nullptr != entry) {
+                    auto next = entry->next;
+                    delete entry;
+                    entry = next;
                 }
                 resource->pool[i] = nullptr;
             }

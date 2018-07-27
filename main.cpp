@@ -19,6 +19,8 @@ int main(int argc, char **args) {
 
     (*ll3)();
 
+    delete ll3;
+
     ll4();
 
     auto l3 = fika::Array<fika::Lambda<int(void)>>::fill(32, ll4);
@@ -98,6 +100,9 @@ int main(int argc, char **args) {
     for(int i: {1, 2, 3, 4, 5}) {
         printf("OK: %d\n", i);
     }
+
+    delete a;
+    delete b;
 
     return 0;
 }

@@ -6,6 +6,8 @@
 #include "fika/iterator.hpp"
 #include "fika/initializer_list.hpp"
 
+#include <cstdio>
+
 namespace fika {
     template<typename T> class ArrayIteratorState : public IteratorState<T> {
     public:
@@ -36,6 +38,9 @@ namespace fika {
         virtual bool has_next(IteratorState<T> *uncastedState) override {
             auto state = static_cast<ArrayIteratorState<T>*>(uncastedState);
             return state->i < array_size;
+        }
+        ~ArrayResource() {
+            operator delete(reinterpret_cast<void*>(data));
         }
     };
     template<typename T> class Array : public MutableContainer<T> {
