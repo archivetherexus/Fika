@@ -26,8 +26,7 @@ namespace fika {
             this->resource->reference_count++;
         }
         ~Iterator() {
-            resource->reference_count--;
-            if (0 == resource->reference_count) {
+            if (0 == --resource->reference_count) {
                 delete resource;
             }
             delete state;

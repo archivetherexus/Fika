@@ -71,8 +71,7 @@ namespace fika {
         : Array(other.resource) {
         }
         ~Array() {
-            resource->reference_count--;
-            if (0 == resource->reference_count) { // FIXME: Convert to one liner.
+            if (0 == --resource->reference_count) {
                 delete resource;
             }
         }

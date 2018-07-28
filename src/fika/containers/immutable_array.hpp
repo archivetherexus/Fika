@@ -94,8 +94,7 @@ namespace fika {
             this->resource->reference_count++;
         }
         ~ImmutableArray() {
-            resource->reference_count--;
-            if (0 == resource->reference_count) { // FIXME: Convert to one liner.
+            if (0 == --resource->reference_count) {
                 delete resource;
             }
         }

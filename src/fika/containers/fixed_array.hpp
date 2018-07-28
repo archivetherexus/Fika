@@ -76,8 +76,7 @@ namespace fika {
             // TODO: Could we move the copy constructor to the base class?
         }
         ~FixedArray() {
-            resource->reference_count--;
-            if (0 == resource->reference_count) { // FIXME: This could be merged into one statement.
+            if (0 == --resource->reference_count) {
                 delete resource;
             }
         }

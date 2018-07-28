@@ -5,6 +5,7 @@
 #include "src/fika/containers/array.hpp"
 #include "src/fika/containers/immutable_array.hpp"
 #include "src/fika/containers/map.hpp"
+#include "src/fika/fs.hpp"
 #include <cstdio>
 
 int main(int argc, char **args) {

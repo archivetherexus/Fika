@@ -105,8 +105,7 @@ namespace fika {
             return Map<K, V>(new MapResource<K, V>((U64)pool_size));
         }
         ~Map() {
-            resource->reference_count--;
-            if (0 == resource->reference_count) {
+            if (0 == --resource->reference_count) {
                 delete resource;
             }
         }
