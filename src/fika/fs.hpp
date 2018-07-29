@@ -6,53 +6,110 @@
 
 namespace fika {
     // TODO: Not sure if this implmenetation is really the... best...
+
     typedef String Path;
     class Location {
     };
     class FileSystemEntryState {
     public:
+        int reference_count = 0;
+
         virtual bool move(Location other) = 0;
         virtual bool move(Location other, String newName) = 0;
-        virtual bool rename(class String newName);
+        virtual bool rename(class String newName) = 0;
 
         virtual void open() = 0; 
         virtual void close() = 0;
 
         virtual class FileSystemEntry *entry(String entryName) = 0;
+
+        virtual ~FileSystemEntryState() {};
     };
     class FileSystemEntry {
     public:
-        virtual bool move(Location other) {
-            return state->move(other);
-        };
-        virtual bool move(Location other, String newName) {
-            return state->move(other, newName);
+        bool move(Location other);
+        bool move(Location other, String newName);
+        bool rename(class String newName);
+        virtual ~FileSystemEntry() {
+            if (0 == --state->reference_count) {
+                delete state;
+            }
         }
-        virtual bool rename(class String newName) {
-            return state->rename(newName);
+        FileSystemEntry(FileSystemEntryState *state)
+        : state(state) {
+            state->reference_count++;
         }
     protected:
         FileSystemEntryState *state;
     };
-    class File : FileSystemEntry {
+    class File : public FileSystemEntry {
     public:
-        // TODO: There should be a way to get a InputOutputStream here.
-        virtual void open() {
-            state->open();
-        }; 
-        virtual void close() {
-            state->close();
+        
+        File(FileSystemEntryState *state)
+        : FileSystemEntry(state) {
+
         }
     };
-    class Directory : FileSystemEntry, Location {
-        virtual FileSystemEntry entry(String entryName) {
-            return *state->entry(entryName);
+    class Directory : public FileSystemEntry, Location {
+        FileSystemEntry entry(String entryName);
+        Directory(FileSystemEntryState *state)
+        : FileSystemEntry(state) {
+
+        }
+    };
+    class Nonexistent : public FileSystemEntry {
+    public:
+        Nonexistent(FileSystemEntryState *state)
+        : FileSystemEntry(state) {
+
         }
     };
     class VirtualFileSystem {
     public:   
-        virtual FileSystemEntry entry(Path path) = 0;
+        class Entry {
+        public:
+            virtual class Directory *directory() {
+                return nullptr;
+            }
+            virtual class File *file() {
+                return nullptr;
+            }
+            virtual bool exists() {
+                return false;
+            }
+            virtual bool move(Location other) {
+                (void)other;
+                return false;
+            }
+            virtual bool move(Location other, String newName) {
+                (void)other;
+                (void)newName;
+                return false;
+            }
+            virtual bool rename(class String newName) {
+                (void)newName;
+                return false;
+            }
+            virtual ~Entry() {}
+        };
+        class Directory {
+        public:
+            Entry entry(String entryName);
+        };
+        class File {
+        public:
+            // TODO: There should be a way to get a InputOutputStream here.
+            void open();
+            void close();
+        };
+
+        virtual Entry entry(Path path) = 0;
     };
+    class StandardFileSystem : public VirtualFileSystem {
+    public:
+        virtual Entry entry(Path path);
+    };
+    extern StandardFileSystem fs;
 }
 
 #endif

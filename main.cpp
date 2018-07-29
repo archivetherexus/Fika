@@ -10,6 +10,9 @@
 
 int main(int argc, char **args) {
 
+    auto e1 = fika::fs.entry("/home/katou/file");
+    printf(e1.exists() ? "It exists!" : "It does not exist!");
+
     (void)argc;
     (void)args;
 
