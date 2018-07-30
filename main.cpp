@@ -8,10 +8,14 @@
 #include "src/fika/fs.hpp"
 #include <cstdio>
 
+#include "syscall.hpp"
+
 int main(int argc, char **args) {
 
     auto e1 = fika::fs.entry("/home/katou/file");
-    printf(e1.exists() ? "It exists!" : "It does not exist!");
+    puts(e1.exists() ? "It exists!" : "It does not exist!");
+    auto e2 = fika::fs.entry("/home/katou/file-blablabla");
+    puts(e2.exists() ? "It exists!" : "It does not exist!");
 
     (void)argc;
     (void)args;

@@ -1,24 +1,30 @@
 #include "fika/fs.hpp"
+#include "syscall.hpp"
 
+#include <cstring>
 
 namespace fika {
-    StandardFileSystem fs{};
 
-    class StandardEntry : public VirtualFileSystem::Entry {
+    const U64 F_OK = 0; // Test for existence.          //
+    const U64 X_OK = 1; // Test for execute permission. //
+    const U64 W_OK = 2; // Test for write permission.   //
+    const U64 R_OK = 4; // Test for read permission.    //
+
+    class StandardEntryResource : public VirtualFileSystem::EntryResource {
     public:
         virtual bool exists() override {
 
-            // TODO: Move this elsewhere.
-            auto c_string = new char[path.count()];
+            // TODO: Move this elsewhere. Perhaps... c_string()
+            auto c_string = new char[path.count() + 1];
             auto iterator = path.iterator(0);
             U64 index = 0;
             while(iterator.has_next()) {
                 c_string[index++] = iterator.next();
             }
+            c_string[index] = '\0';
 
-            puts(c_string);
-
-            auto result = false;
+            // TODO: Maybe not use hardcoded constants?
+            auto result = fika_sysv_syscall(0x15, (U64)c_string, F_OK, 0) == 0;
 
             delete[] c_string;
 
@@ -26,14 +32,13 @@ namespace fika {
         }
 
         Path path;
-        StandardEntry(Path path)
+        StandardEntryResource(Path path)
         : path(path) {
 
         }
     };
 
-    VirtualFileSystem::Entry StandardFileSystem::entry(Path path) {
-        // TODO: Object slicing takes place here... Solve with proper "smart pointers..."
-        return StandardEntry(path);
-    }
+    static FileSystemImplementation<StandardEntryResource> fs_implementation{};
+
+    VirtualFileSystem &fs = fs_implementation;
 }

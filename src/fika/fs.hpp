@@ -65,9 +65,10 @@ namespace fika {
         }
     };
     class VirtualFileSystem {
-    public:   
-        class Entry {
+    public:
+        class EntryResource {
         public:
+            int reference_count = 0;
             virtual class Directory *directory() {
                 return nullptr;
             }
@@ -90,7 +91,43 @@ namespace fika {
                 (void)newName;
                 return false;
             }
-            virtual ~Entry() {}
+            virtual ~EntryResource() {};
+        };
+        class Entry {
+        public:
+            class Directory *directory() {
+                return resource->directory();
+            }
+            class File *file() {
+                return resource->file();
+            }
+            bool exists() {
+                return resource->exists();
+            }
+            bool move(Location other) {
+                return resource->move(other);
+            }
+            bool move(Location other, String newName) {
+                return resource->move(other, newName);
+            }
+            bool rename(class String newName) {
+                return resource->rename(newName);
+            }
+            Entry(const Entry &other)
+            : resource(other.resource) {
+
+            }
+            Entry(EntryResource *resource)
+            : resource(resource) {
+                resource->reference_count++;
+            }
+            ~Entry() {
+                if (0 == --resource->reference_count) {
+                    delete resource;
+                }
+            }
+        private:
+            EntryResource *resource;
         };
         class Directory {
         public:
@@ -105,11 +142,14 @@ namespace fika {
 
         virtual Entry entry(Path path) = 0;
     };
-    class StandardFileSystem : public VirtualFileSystem {
+    template<class ER>class FileSystemImplementation : public VirtualFileSystem {
     public:
-        virtual Entry entry(Path path);
+        virtual Entry entry(Path path) override {
+            return Entry(new ER(path));
+        }
     };
-    extern StandardFileSystem fs;
+    extern VirtualFileSystem &fs;
+
 }
 
 #endif

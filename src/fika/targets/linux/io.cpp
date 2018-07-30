@@ -11,7 +11,7 @@ namespace fika {
         auto iterator = string.iterator(0);
         while(iterator.has_next()) {
             c[0] = iterator.next();
-            fika_sysv_syscall(1, 1, (Length)c, 1);
+            fika_sysv_syscall(0x1, 1, (Length)c, 1);
         }
     }
 }
