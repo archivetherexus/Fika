@@ -1,6 +1,6 @@
 #pragma once
-#ifndef FIKA_SYSCALL_HPP
-#define FIKA_SYSCALL_HPP
+#ifndef FIKA_ARCH_SYSCALL_HPP
+#define FIKA_ARCH_SYSCALL_HPP
 
 #include "types.hpp"
 

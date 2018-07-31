@@ -9,3 +9,4 @@ If you're running linux on x86_64, you'd combine the following targets:
 * common
 * x86_64
 * linux
+* linux_64

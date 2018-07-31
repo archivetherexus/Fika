@@ -1,6 +1,6 @@
 #include "fika/fs.hpp"
 #include "syscall.hpp"
-
+#include "syscalls.hpp"
 #include <cstring>
 
 namespace fika {
@@ -24,7 +24,7 @@ namespace fika {
             c_string[index] = '\0';
 
             // TODO: Maybe not use hardcoded constants?
-            auto result = fika_sysv_syscall(0x15, (U64)c_string, F_OK, 0) == 0;
+            auto result = fika_sysv_syscall(fika::Syscalls::ACCESS, (U64)c_string, F_OK, 0) == 0;
 
             delete[] c_string;
 

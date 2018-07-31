@@ -58,7 +58,9 @@ namespace fika {
 
             return FixedArray<T>(resource);
         }*/
-        static FixedArray<array_capacity, T> from(std::initializer_list<T> list) {
+        static constexpr FixedArray<array_capacity, T> from(const std::initializer_list<T> list) {
+            //list.size() > array_capacity ? static_assert(0, "FixedArray is too small to fit the initializer value.") : 0;
+            //static_assert(list2.size() < array_capacity, "FixedArray is too small to fit the initializer value.");
             auto resource = new FixedArrayResource<array_capacity, T>;
 
             int i = 0;

@@ -11,7 +11,7 @@ namespace std {
         const E*     array_data;
         fika::Length array_length;
 
-        constexpr initializer_list(const E* array_data, fika::Length array_length)
+        constexpr initializer_list(const E* array_data, const fika::Length array_length)
         : array_data(array_data)
         , array_length(array_length) {
 

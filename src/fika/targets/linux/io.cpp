@@ -1,6 +1,7 @@
 #include "fika/io.hpp"
 
 #include "syscall.hpp"
+#include "syscalls.hpp"
 
 namespace fika {
     StandardInputOutputStream io{};
@@ -11,7 +12,7 @@ namespace fika {
         auto iterator = string.iterator(0);
         while(iterator.has_next()) {
             c[0] = iterator.next();
-            fika_sysv_syscall(0x1, 1, (Length)c, 1);
+            fika_sysv_syscall(fika::Syscalls::ACCESS, 1, (Length)c, 1);
         }
     }
 }

@@ -1,0 +1,1 @@
+CFLAGS += -Isrc/fika/targets/linux_64
