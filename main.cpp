@@ -12,6 +12,8 @@
 
 int main(int argc, char **args) {
 
+
+
     //fika::FixedArray<2, int>::from({1, 2, 3, 4});
 
     auto e1 = fika::fs.entry("/home/katou/file");

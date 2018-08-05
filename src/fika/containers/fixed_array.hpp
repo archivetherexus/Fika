@@ -1,6 +1,6 @@
 #pragma once
-#ifndef FIKA_FIXED_ARRAY_HPP
-#define FIKA_FIXED_ARRAY_HPP
+#ifndef FIKA_CONTAINERS_FIXED_ARRAY_HPP
+#define FIKA_CONTAINERS_FIXED_ARRAY_HPP
 
 #include "mutable_container.hpp"
 #include "fika/iterator.hpp"
@@ -91,7 +91,9 @@ namespace fika {
         virtual U64 count() const override {
             return array_capacity;
         }
-        
+        virtual void push(T value) override {
+            // TODO: Implement later...
+        }
         FixedArray<array_capacity, T> operator=(std::initializer_list<T> list) {
             U64 i = 0 ;
             for (auto x : list) {

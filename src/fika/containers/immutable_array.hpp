@@ -1,6 +1,6 @@
 #pragma once
-#ifndef FIKA_IMMUTABLE_ARRAY_HPP
-#define FIKA_IMMUTABLE_ARRAY_HPP
+#ifndef FIKA_CONTAINERS_IMMUTABLE_ARRAY_HPP
+#define FIKA_CONTAINERS_IMMUTABLE_ARRAY_HPP
 
 #include "fika/empty.hpp"
 #include "fika/container.hpp"

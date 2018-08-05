@@ -1,6 +1,6 @@
 #pragma once
-#ifndef FIKA_HASHABLE_OBJECT_HPP
-#define FIKA_HASHABLE_OBJECT_HPP
+#ifndef FIKA_OBJECTS_HASHABLE_OBJECT_HPP
+#define FIKA_OBJECTS_HASHABLE_OBJECT_HPP
 
 #include "types.hpp"
 

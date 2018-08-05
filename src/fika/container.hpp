@@ -4,6 +4,8 @@
 
 #include "types.hpp"
 #include "fika/objects/safe_object.hpp"
+#include "fika/objects/serializable_object.hpp"
+#include "fika/serializer.hpp"
 
 namespace fika {
 
@@ -23,10 +25,20 @@ namespace fika {
             
         };
     };
-    template<typename T> class Container : public SafeObject {
+    template<typename T> class Container : public SafeObject, public SerializableObject {
     public:
         virtual Iterator<T> iterator(T default_value) const = 0;
         virtual U64 count() const = 0;
+        virtual void serialize(Serializer *serializer) const override {
+            auto array = serializer->array();
+            T *tmp = reinterpret_cast<T*>(operator new(sizeof(T))); // TODO: Uhh...
+            auto i = iterator(*tmp);
+            while (i.has_next()) {
+                array.add(i.next());
+            }
+            array.end();
+            delete[] tmp;
+        }
     };
 }
 

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef FIKA_MAP_HPP
-#define FIKA_MAP_HPP
+#ifndef FIKA_CONTAINERS_MAP_HPP
+#define FIKA_CONTAINERS_MAP_HPP
 
 #include "mutable_associative_array.hpp"
 #include "fika/objects/comparable_object.hpp"
@@ -149,6 +149,9 @@ namespace fika {
             resource->elements = 0;
         };
         Map &operator = (const Map &) = default;
+        virtual void push(Pair<K, V> v) override {
+            set(v.a, v.b);
+        }
     private:
         MapResource<K, V> *resource;
         Map(MapResource<K, V> *resource)
